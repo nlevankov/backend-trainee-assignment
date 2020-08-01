@@ -8,6 +8,7 @@ import (
 
 	"github.com/backend-trainee-assignment/controllers"
 	"github.com/backend-trainee-assignment/models"
+	"github.com/backend-trainee-assignment/views"
 )
 
 func main() {
@@ -52,6 +53,12 @@ func main() {
 	chatsC := controllers.NewChats(services.Chat)
 	messageC := controllers.NewMessages(services.Message)
 
+	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		views.RenderJSON(w, nil, http.StatusNotFound, models.ErrNoSuchEndpointExists)
+	})
+	r.MethodNotAllowedHandler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		views.RenderJSON(w, nil, http.StatusNotFound, models.ErrNoSuchHTTPMethod)
+	})
 	r.HandleFunc("/users/add", usersC.Create).Methods(http.MethodPost)
 	r.HandleFunc("/chats/add", chatsC.Create).Methods(http.MethodPost)
 	r.HandleFunc("/messages/add", messageC.Create).Methods(http.MethodPost)
