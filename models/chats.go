@@ -23,16 +23,16 @@ type ChatQueryParams struct {
 }
 
 const (
-	ErrChatNameIsEmpty modelError = "models: 'name' can't be empty"
-	ErrChatNameIsNull  modelError = "models: 'name' can't be null"
-	ErrChatUserIsNull  modelError = "models: 'user' can't be null"
+	ErrChatNameIsEmpty modelError = "'name' can't be empty"
+	ErrChatNameIsNull  modelError = "'name' can't be null"
+	ErrChatUserIsNull  modelError = "'user' can't be null"
 
-	ErrChatUsersIsNull     modelError = "models: 'users' can't be null"
-	ErrChatUsersIsEmpty    modelError = "models: 'users' can't be empty"
-	ErrChatUsersIDsAreNull modelError = "models: 'users' can't contain null(s)"
+	ErrChatUsersIsNull     modelError = "'users' can't be null"
+	ErrChatUsersIsEmpty    modelError = "'users' can't be empty"
+	ErrChatUsersIDsAreNull modelError = "'users' can't contain null(s)"
 
-	ErrChatAlreadyExists      modelError = "models: chat with this name already exists"
-	ErrChatSomeUsersDontExist modelError = "models: some users don't exist"
+	ErrChatAlreadyExists      modelError = "The chat with this name already exists"
+	ErrChatSomeUsersDontExist modelError = "Some users don't exist"
 )
 
 type ChatService interface {

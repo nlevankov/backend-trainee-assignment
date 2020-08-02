@@ -18,11 +18,11 @@ type User struct {
 }
 
 const (
-	ErrUserNameIsEmpty modelError = "models: 'username' can't be empty"
+	ErrUserNameIsEmpty modelError = "'username' can't be empty"
 
-	ErrUserNameIsNull modelError = "models: 'username' can't be null"
+	ErrUserNameIsNull modelError = "'username' can't be null"
 
-	ErrUserAlreadyExists modelError = "models: user with this name already exists"
+	ErrUserAlreadyExists modelError = "User with this name already exists"
 )
 
 type UserService interface {

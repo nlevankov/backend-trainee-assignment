@@ -18,14 +18,14 @@ type Message struct {
 
 // todo наверняка можно отрефакторить и сделать сообщения в более унифицированном формате
 const (
-	ErrMessageChatDoesntExist modelError = "models: the chat with the provided id doesn't exist"
-	ErrMessageUserDoesntExist modelError = "models: the user with the provided id doesn't exist"
-	ErrMessageUserIsNotInChat modelError = "models: the user is not in the chat"
+	ErrMessageChatDoesntExist modelError = "The chat with the provided id doesn't exist"
+	ErrMessageUserDoesntExist modelError = "The user with the provided id doesn't exist"
+	ErrMessageUserIsNotInChat modelError = "The user is not in the chat"
 
-	ErrMessageChatIsNull   modelError = "models: 'chat' can't be null"
-	ErrMessageAuthorIsNull modelError = "models: 'author' can't be null"
-	ErrMessageTextIsNull   modelError = "models: 'text' can't be null"
-	ErrMessageTextIsEmpty  modelError = "models: 'text' can't be empty"
+	ErrMessageChatIsNull   modelError = "'chat' can't be null"
+	ErrMessageAuthorIsNull modelError = "'author' can't be null"
+	ErrMessageTextIsNull   modelError = "'text' can't be null"
+	ErrMessageTextIsEmpty  modelError = "'text' can't be empty"
 )
 
 type MessageService interface {
