@@ -55,12 +55,13 @@ func decodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 			return &malformedRequest{status: http.StatusBadRequest, msg: msg}
 
 		case errors.As(err, &unmarshalTypeError):
-			msg := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
+			msg := fmt.Sprintf("Request body contains an invalid value for the '%s' field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
 			return &malformedRequest{status: http.StatusBadRequest, msg: msg}
 
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
 			fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
-			msg := fmt.Sprintf("Request body contains unknown field %s", fieldName)
+			fieldNameWOQuotes := strings.Trim(fieldName, "\"")
+			msg := fmt.Sprintf("Request body contains unknown field '%s'", fieldNameWOQuotes)
 			return &malformedRequest{status: http.StatusBadRequest, msg: msg}
 
 		case errors.Is(err, io.EOF):
