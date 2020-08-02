@@ -105,29 +105,25 @@ func (cg *chatGorm) ByUserID(userID *uint) ([]*Chat, int, error) {
 	var chats []*Chat
 
 	// получаем id чатов пользователя в требуемом порядке
+	// левое соединение нужно на случай отсутствия сообщений в чате
 	// todo orm генерирует несколько запросов для своих нужд, возможно неоптимально
-	query := `SELECT max(messages.created_at), messages.chat_id as chat_id
-			FROM messages
-			WHERE messages.chat_id in
-			(SELECT chats_users.chat_id FROM chats_users WHERE chats_users.user_id = (?))
-			GROUP BY messages.chat_id
-			ORDER BY max DESC`
-	rows, err := cg.db.
+	query := `SELECT id FROM (SELECT max(messages.created_at), chats.id
+			FROM chats
+			LEFT JOIN messages on chats.id = messages.chat_id
+			WHERE chats.id in
+			(SELECT chats_users.chat_id FROM chats_users WHERE chats_users.user_id = ?)
+			GROUP BY chats.id
+			ORDER BY max DESC NULLS LAST) as tempp`
+	err = cg.db.
 		Raw(query, *userID).
-		Rows()
+		Pluck("id", &chatIDs).Error
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 
-	defer rows.Close()
-	for rows.Next() {
-		var id uint
-		var dummyReceiver time.Time // todo знаю, что это не очень, но пришлось потанцевать с gorm api чтоб найти рабочий raw sql вариант
-		err = rows.Scan(&dummyReceiver, &id)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-		chatIDs = append(chatIDs, id)
+	// чтобы не делать лишних запросов далее, в случае если юзер не состоит ни в каких чатах
+	if chatIDs == nil {
+		return nil, http.StatusOK, nil
 	}
 
 	// получаем чаты пользователя с отсортированными сообщениями в них от позднего к раннему
