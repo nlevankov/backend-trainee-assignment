@@ -64,14 +64,20 @@ type messageGorm struct {
 func (mg *messageGorm) Create(msg *Message) (uint, int, error) {
 	var chat Chat
 	err := mg.db.Where("id = ?", msg.ChatID).First(&chat).Error
-	if chat.ID == nil {
-		return 0, http.StatusNotFound, ErrMessageChatDoesntExist
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return 0, http.StatusNotFound, ErrMessageChatDoesntExist
+		}
+		return 0, http.StatusInternalServerError, err
 	}
 
 	var user User
 	err = mg.db.Where("id = ?", msg.UserID).First(&user).Error
-	if user.ID == nil {
-		return 0, http.StatusNotFound, ErrMessageUserDoesntExist
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return 0, http.StatusNotFound, ErrMessageUserDoesntExist
+		}
+		return 0, http.StatusInternalServerError, err
 	}
 
 	err = mg.db.Preload("Users", "id = ?", user.ID).First(&chat).Error
