@@ -24,7 +24,7 @@ func (mr *malformedRequest) Public() string {
 	return mr.Error()
 }
 
-// todo возможно существует пакет, который реализует эти стандартные проверки
+// возможно существует пакет, который реализует эти стандартные проверки
 //  решение взял отсюда: https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 func decodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	if r.Header.Get("Content-Type") != "" {
