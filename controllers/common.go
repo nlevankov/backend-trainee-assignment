@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/backend-trainee-assignment/views"
 	"github.com/golang/gddo/httputil/header"
 )
 
@@ -22,6 +23,16 @@ func (mr *malformedRequest) Error() string {
 
 func (mr *malformedRequest) Public() string {
 	return mr.Error()
+}
+
+// it assumes that err != nil
+func classificateErrorAndRenderView(w http.ResponseWriter, err error) {
+	var mr *malformedRequest
+	if errors.As(err, &mr) {
+		views.RenderJSON(w, nil, mr.status, err)
+	} else {
+		views.RenderJSON(w, nil, http.StatusInternalServerError, err)
+	}
 }
 
 // возможно существует пакет, который реализует эти стандартные проверки

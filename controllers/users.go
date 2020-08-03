@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"errors"
 	"github.com/backend-trainee-assignment/models"
 	"github.com/backend-trainee-assignment/views"
 	"net/http"
@@ -14,16 +13,6 @@ type Users struct {
 func NewUsers(us models.UserService) *Users {
 	return &Users{
 		us: us,
-	}
-}
-
-// it assumes that err != nil
-func classificateErrorAndRenderView(w http.ResponseWriter, err error) {
-	var mr *malformedRequest
-	if errors.As(err, &mr) {
-		views.RenderJSON(w, nil, mr.status, err)
-	} else {
-		views.RenderJSON(w, nil, http.StatusInternalServerError, err)
 	}
 }
 
