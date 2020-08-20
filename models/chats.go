@@ -186,6 +186,7 @@ func (cv *chatValidator) Create(cqp *ChatQueryParams) (uint, int, error) {
 		cv.chatUsersNotNull,
 		cv.chatNameNotEmpty,
 		cv.chatUsersNotEmpty,
+		cv.chatUsersRemoveDuplicates,
 		cv.chatUsersIDsNotNull)
 	if err != nil {
 		return 0, statusCode, err
@@ -258,5 +259,22 @@ func (cv *chatValidator) chatUsersIDsNotNull(cqv *ChatQueryParams) (int, error) 
 			return http.StatusBadRequest, ErrChatUsersIDsAreNull
 		}
 	}
+	return http.StatusOK, nil
+}
+
+func (cv *chatValidator) chatUsersRemoveDuplicates(cqv *ChatQueryParams) (int, error) {
+	seen := make(map[stringID]struct{})
+	for _, item := range cqv.UserIDs {
+		seen[*item] = struct{}{}
+	}
+
+	cqv.UserIDs = nil
+
+	for item := range seen {
+		func(id stringID) {
+			cqv.UserIDs = append(cqv.UserIDs, &id)
+		}(item)
+	}
+
 	return http.StatusOK, nil
 }
