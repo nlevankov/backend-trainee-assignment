@@ -22,10 +22,10 @@ func main() {
 
 	prodFlagPtr := flag.Bool("prod", false, "Provide this flag "+
 		"in production. This ensures that a .config file is "+
-		"provided before the application starts and enables log mode.")
+		"provided before the application starts.")
 
 	setSchemaFlagPtr := flag.Bool("setschema", false, "WARNING: it is destructive action. Provide this flag "+
-		"to set the db schema. If '-prod' flag is provided, this flag will be ignored.")
+		"to initialize the storage. If '-prod' flag is provided, this flag will be ignored.")
 
 	flag.Parse()
 
@@ -37,7 +37,7 @@ func main() {
 
 	services, err := models.NewServices(
 		models.WithGorm(cfg.Database.Dialect(), cfg.Database.ConnectionInfo(), int(cfg.StorageConnNumOfAttempts), int(cfg.StorageConnIntervalBWAttempts)),
-		models.WithLogMode(*prodFlagPtr),
+		models.WithLogMode(cfg.Logmode),
 		models.WithUser(),
 		models.WithChat(),
 		models.WithMessage(),
