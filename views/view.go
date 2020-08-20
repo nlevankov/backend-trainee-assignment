@@ -26,6 +26,7 @@ func RenderJSON(w http.ResponseWriter, result interface{}, StatusCode int, err e
 	}
 
 	enc := json.NewEncoder(w)
+	enc.SetEscapeHTML(false)
 	d := map[string]interface{}{"Result": result, "Error": msg}
 	if err = enc.Encode(d); err != nil {
 		log.Println(err)
