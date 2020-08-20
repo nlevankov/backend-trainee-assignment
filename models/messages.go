@@ -10,8 +10,8 @@ import (
 
 type Message struct {
 	ID        *uint   `gorm:"primary_key"`
-	ChatID    *uint   `json:"chat"`   // chat
-	UserID    *uint   `json:"author"` // author
+	ChatID    *uint   `json:"chat,string"`   // chat
+	UserID    *uint   `json:"author,string"` // author
 	Text      *string `gorm:"not null" json:"text"`
 	CreatedAt *time.Time
 }

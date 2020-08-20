@@ -1,10 +1,12 @@
 package models
 
 import (
+	"encoding/json"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/lib/pq"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -17,9 +19,28 @@ type Chat struct {
 }
 
 type ChatQueryParams struct {
-	Name    *string `json:"name"`
-	UserIDs []*uint `json:"users"`
-	UserID  *uint   `json:"user"`
+	Name    *string     `json:"name"`
+	UserIDs []*stringID `json:"users"`
+	UserID  *uint       `json:"user,string"`
+}
+
+// A helper type, just because ",string" struct tag doesn't work with slices
+type stringID uint
+
+func (sID *stringID) UnmarshalJSON(b []byte) error {
+	var s string
+	if err := json.Unmarshal(b, &s); err != nil {
+		return err
+	}
+
+	v, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return err
+	}
+
+	*sID = stringID(v)
+
+	return nil
 }
 
 const (
