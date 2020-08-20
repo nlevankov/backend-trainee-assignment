@@ -4,7 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/backend-trainee-assignment/controllers"
 	"github.com/backend-trainee-assignment/models"
@@ -61,7 +66,23 @@ func main() {
 	r.HandleFunc("/chats/get", chatsC.ByUserID).Methods(http.MethodPost)
 	r.HandleFunc("/messages/get", messageC.ByChatID).Methods(http.MethodPost)
 
-	must(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), r))
+	go func() {
+		must(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), r))
+	}()
+
+	var n sync.WaitGroup
+	n.Add(1)
+	go func() {
+		sigs := make(chan os.Signal, 1)
+		signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT)
+		sig := <-sigs
+		log.Printf("Got <%v> signal, shutting down...", sig)
+		n.Done()
+	}()
+
+	fmt.Printf("Started HTTP server on localhost:%d\nSend SIGINT or SIGTERM to exit\n", cfg.Port)
+
+	n.Wait()
 }
 
 func must(err error) {
