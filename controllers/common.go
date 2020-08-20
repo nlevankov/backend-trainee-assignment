@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/backend-trainee-assignment/views"
@@ -55,6 +56,7 @@ func decodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 	if err != nil {
 		var syntaxError *json.SyntaxError
 		var unmarshalTypeError *json.UnmarshalTypeError
+		var numError *strconv.NumError
 
 		switch {
 		case errors.As(err, &syntaxError):
@@ -82,6 +84,20 @@ func decodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 		case err.Error() == "http: request body too large":
 			msg := "Request body must not be larger than 1MB"
 			return &malformedRequest{status: http.StatusRequestEntityTooLarge, msg: msg}
+
+			//todo пока так, наверняка можно что-то по лучше придумать, но это по крайней мере лучше,
+			//  чем 500-ая ошибка
+		case errors.As(err, &numError):
+			typeName := strings.TrimPrefix(numError.Func, "Parse")
+			msg := fmt.Sprintf("Trying to parse '%s' into %v", numError.Num, typeName)
+			return &malformedRequest{status: http.StatusBadRequest, msg: msg}
+
+			//todo пока так, наверняка можно что-то по лучше придумать, но это по крайней мере лучше,
+			//  чем 500-ая ошибка
+		case strings.HasPrefix(err.Error(), "json: invalid use of ,string struct tag, "):
+			msg := strings.TrimPrefix(err.Error(), "json: invalid use of ,string struct tag, ")
+			msg = strings.ReplaceAll(msg, "\"", "'")
+			return &malformedRequest{status: http.StatusBadRequest, msg: msg}
 
 		default:
 			return err
