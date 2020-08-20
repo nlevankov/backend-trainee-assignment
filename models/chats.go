@@ -186,8 +186,9 @@ func (cv *chatValidator) Create(cqp *ChatQueryParams) (uint, int, error) {
 		cv.chatUsersNotNull,
 		cv.chatNameNotEmpty,
 		cv.chatUsersNotEmpty,
-		cv.chatUsersRemoveDuplicates,
-		cv.chatUsersIDsNotNull)
+		cv.chatUsersIDsNotNull,
+		cv.chatUsersRemoveDuplicates)
+
 	if err != nil {
 		return 0, statusCode, err
 	}
