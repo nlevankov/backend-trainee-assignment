@@ -16,9 +16,11 @@ type PostgresConfig struct {
 }
 
 type Config struct {
-	Port                          uint `json:"port"`
-	StorageConnNumOfAttempts      uint `json:"storage_conn_num_of_attempts"`
-	StorageConnIntervalBWAttempts uint `json:"storage_conn_interval_bw_attempts"`
+	IP                            string `json:"ip"`
+	Port                          uint   `json:"port"`
+	StorageConnNumOfAttempts      uint   `json:"storage_conn_num_of_attempts"`
+	StorageConnIntervalBWAttempts uint   `json:"storage_conn_interval_bw_attempts"`
+	Logmode                       bool   `json:"log_mode"`
 
 	Database PostgresConfig `json:"database"`
 }
@@ -49,9 +51,11 @@ func DefaultPostgresConfig() PostgresConfig {
 func DefaultConfig() Config {
 	return Config{
 		Database:                      DefaultPostgresConfig(),
+		IP:                            "",
 		Port:                          9000,
 		StorageConnNumOfAttempts:      3,
 		StorageConnIntervalBWAttempts: 3,
+		Logmode:                       false,
 	}
 }
 

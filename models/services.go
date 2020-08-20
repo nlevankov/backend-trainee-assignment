@@ -4,6 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"log"
+	"os"
 	"time"
 )
 
@@ -14,7 +15,8 @@ type Services struct {
 	Chat    ChatService
 	Message MessageService
 
-	db *gorm.DB
+	db      *gorm.DB
+	logFile *os.File
 }
 
 func NewServices(cfgs ...ServicesConfig) (*Services, error) {
@@ -50,8 +52,23 @@ func WithGorm(dialect, connectionInfo string, num, interval int) ServicesConfig 
 
 func WithLogMode(mode bool) ServicesConfig {
 	return func(s *Services) error {
-		s.db.LogMode(mode)
+		if mode {
+			var err error
+			s.logFile, err = os.OpenFile("log.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				s.CloseStorage()
+				log.Fatal(err)
+			}
 
+			// разделяем сессии работы приложения
+			if _, err := s.logFile.Write([]byte("\r\n")); err != nil {
+				s.Close()
+				log.Fatal(err)
+			}
+
+			s.db.SetLogger(log.New(s.logFile, "\r\n", log.LstdFlags))
+			return s.db.LogMode(true).Error
+		}
 		return nil
 	}
 }
@@ -88,8 +105,19 @@ func WithSetSchema(mode bool) ServicesConfig {
 	}
 }
 
-func (s *Services) Close() error {
-	return s.db.Close()
+func (s *Services) Close() {
+	if s.logFile != nil {
+		if err := s.logFile.Close(); err != nil {
+			log.Println(err)
+		}
+	}
+	s.CloseStorage()
+}
+
+func (s *Services) CloseStorage() {
+	if err := s.db.Close(); err != nil {
+		log.Println(err)
+	}
 }
 
 func setSchema(db *gorm.DB) {

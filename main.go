@@ -66,8 +66,9 @@ func main() {
 	r.HandleFunc("/chats/get", chatsC.ByUserID).Methods(http.MethodPost)
 	r.HandleFunc("/messages/get", messageC.ByChatID).Methods(http.MethodPost)
 
+	addr := fmt.Sprintf(cfg.IP+":%d", cfg.Port)
 	go func() {
-		must(http.ListenAndServe(fmt.Sprintf(":%d", cfg.Port), r))
+		must(http.ListenAndServe(addr, r))
 	}()
 
 	var n sync.WaitGroup
@@ -80,7 +81,7 @@ func main() {
 		n.Done()
 	}()
 
-	fmt.Printf("Started HTTP server on localhost:%d\nSend SIGINT or SIGTERM to exit\n", cfg.Port)
+	fmt.Printf("Started HTTP server on %v\nSend SIGINT or SIGTERM to exit\n", addr)
 
 	n.Wait()
 }
