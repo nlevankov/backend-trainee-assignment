@@ -27,13 +27,11 @@ func main() {
 	// the app's config's initialization
 
 	cfg := LoadConfig(*prodFlagPtr)
-	dbCfg := cfg.Database
 
 	// creating services
 
 	services, err := models.NewServices(
-		models.WithGorm(dbCfg.Dialect(), dbCfg.ConnectionInfo()),
-		// Only log when not in prod
+		models.WithGorm(cfg.Database.Dialect(), cfg.Database.ConnectionInfo(), int(cfg.StorageConnNumOfAttempts), int(cfg.StorageConnIntervalBWAttempts)),
 		models.WithLogMode(*prodFlagPtr),
 		models.WithUser(),
 		models.WithChat(),
@@ -42,8 +40,6 @@ func main() {
 	)
 	must(err)
 	defer services.Close()
-
-	fmt.Println("Successfully connected!")
 
 	r := mux.NewRouter()
 

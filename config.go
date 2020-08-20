@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -12,6 +13,14 @@ type PostgresConfig struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
+}
+
+type Config struct {
+	Port                          uint `json:"port"`
+	StorageConnNumOfAttempts      uint `json:"storage_conn_num_of_attempts"`
+	StorageConnIntervalBWAttempts uint `json:"storage_conn_interval_bw_attempts"`
+
+	Database PostgresConfig `json:"database"`
 }
 
 func (c PostgresConfig) Dialect() string {
@@ -37,16 +46,12 @@ func DefaultPostgresConfig() PostgresConfig {
 	}
 }
 
-type Config struct {
-	Port int `json:"port"`
-
-	Database PostgresConfig `json:"database"`
-}
-
 func DefaultConfig() Config {
 	return Config{
-		Database: DefaultPostgresConfig(),
-		Port:     9000,
+		Database:                      DefaultPostgresConfig(),
+		Port:                          9000,
+		StorageConnNumOfAttempts:      3,
+		StorageConnIntervalBWAttempts: 3,
 	}
 }
 
@@ -67,6 +72,16 @@ func LoadConfig(configReq bool) Config {
 	err = dec.Decode(&c)
 	if err != nil {
 		panic(err)
+	}
+
+	if c.Port == 0 {
+		log.Fatal("HTTP port can't be 0")
+	}
+	if c.StorageConnNumOfAttempts == 0 {
+		log.Fatal("A number of attempts can't be 0 (Storage reconnection parameter)")
+	}
+	if c.StorageConnIntervalBWAttempts == 0 {
+		log.Fatal("An interval between attempts can't be 0 (Storage reconnection parameter)")
 	}
 
 	fmt.Println("Successfully loaded .config")
