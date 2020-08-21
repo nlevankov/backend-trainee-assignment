@@ -125,12 +125,12 @@ func setSchema(db *gorm.DB) {
 	db.Debug().Exec("DROP SCHEMA public CASCADE")
 	db.Debug().Exec("CREATE SCHEMA public")
 
-	db.CreateTable(
+	db.Debug().CreateTable(
 		&User{},
 		&Chat{},
 		&Message{},
 	)
 
-	db.Model(&Message{}).AddForeignKey("chat_id", "chats(id)", "CASCADE", "CASCADE")
-	db.Model(&Message{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
+	db.Debug().Model(&Message{}).AddForeignKey("chat_id", "chats(id)", "CASCADE", "CASCADE")
+	db.Debug().Model(&Message{}).AddForeignKey("user_id", "users(id)", "CASCADE", "CASCADE")
 }
