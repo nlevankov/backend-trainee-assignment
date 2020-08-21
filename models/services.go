@@ -30,7 +30,7 @@ func NewServices(cfgs ...ServicesConfig) (*Services, error) {
 	return &s, nil
 }
 
-func WithGorm(dialect, connectionInfo string, num, interval int) ServicesConfig {
+func WithGorm(dialect, connectionInfo string, num int, interval uint) ServicesConfig {
 	return func(s *Services) error {
 		var err error
 		for i := 0; i < num; i++ {

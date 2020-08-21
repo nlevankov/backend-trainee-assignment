@@ -36,7 +36,7 @@ func main() {
 	// creating services
 
 	services, err := models.NewServices(
-		models.WithGorm(cfg.Database.Dialect(), cfg.Database.ConnectionInfo(), int(cfg.StorageConnNumOfAttempts), int(cfg.StorageConnIntervalBWAttempts)),
+		models.WithGorm(cfg.Database.Dialect(), cfg.Database.ConnectionInfo(), int(cfg.StorageConnNumOfAttempts), cfg.StorageConnIntervalBWAttempts),
 		models.WithLogMode(cfg.Logmode),
 		models.WithUser(),
 		models.WithChat(),
