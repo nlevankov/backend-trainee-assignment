@@ -11,21 +11,17 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/backend-trainee-assignment/controllers"
-	"github.com/backend-trainee-assignment/models"
-	"github.com/backend-trainee-assignment/views"
+	"github.com/nlevankov/backend-trainee-assignment/controllers"
+	"github.com/nlevankov/backend-trainee-assignment/models"
+	"github.com/nlevankov/backend-trainee-assignment/views"
 )
 
 func main() {
 
 	// flags' initialization
 
-	prodFlagPtr := flag.Bool("prod", false, "Provide this flag "+
-		"in production. This ensures that a .config file is "+
-		"provided before the application starts.")
-
 	setSchemaFlagPtr := flag.Bool("setschema", false, "WARNING: it is destructive action. Provide this flag "+
-		"to initialize the storage. If '-prod' flag is provided, this flag will be ignored.")
+		"to initialize the storage.")
 
 	flag.Parse()
 
@@ -41,7 +37,7 @@ func main() {
 		models.WithUser(),
 		models.WithChat(),
 		models.WithMessage(),
-		models.WithSetSchema(!(*prodFlagPtr) && *setSchemaFlagPtr),
+		models.WithSetSchema(*setSchemaFlagPtr),
 	)
 	must(err)
 	defer services.Close()
