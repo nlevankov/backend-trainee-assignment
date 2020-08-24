@@ -31,7 +31,7 @@ func main() {
 
 	// the app's config's initialization
 
-	cfg := LoadConfig(*prodFlagPtr)
+	cfg := LoadConfig()
 
 	// creating services
 
