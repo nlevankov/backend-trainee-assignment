@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  database:
+    build: ./storage
+    restart: on-failure
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+    ports:
+      - "5432:5432"
+
+  bta-app:
+    build: .
+    restart: on-failure
+    environment:
+      - APP_IP=
+      - APP_PORT=9000
+      - APP_RETRY_NUM=5
+      - APP_RETRY_INTERVAL=3
+      - APP_LOGMODE=true
+      - APP_STORAGE_HOST=database
+      - APP_STORAGE_PORT=5432
+      - APP_STORAGE_USER=postgres
+      - APP_STORAGE_PWD=123
+      - APP_STORAGE_DBNAME=bta_dev
+    ports:
+      - "9000:9000"
+    depends_on:
+      - database
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+
+volumes:
+  database-data: # persist data even if container shuts down
