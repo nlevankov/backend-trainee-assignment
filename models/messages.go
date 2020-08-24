@@ -16,7 +16,6 @@ type Message struct {
 	CreatedAt *time.Time
 }
 
-// todo наверняка можно отрефакторить и сделать сообщения в более унифицированном формате
 const (
 	ErrMessageChatDoesntExist modelError = "The chat with the provided id doesn't exist"
 	ErrMessageUserDoesntExist modelError = "The user with the provided id doesn't exist"

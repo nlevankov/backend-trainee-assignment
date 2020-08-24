@@ -16,7 +16,6 @@ func NewMessages(ms models.MessageService) *Message {
 	}
 }
 
-// todo отрефакторить, во всех контроллерах
 func (m *Message) Create(w http.ResponseWriter, r *http.Request) {
 	var msg models.Message
 
