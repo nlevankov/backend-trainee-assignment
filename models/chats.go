@@ -127,7 +127,6 @@ func (cg *chatGorm) ByUserID(userID *uint) ([]*Chat, int, error) {
 
 	// получаем id чатов пользователя в требуемом порядке
 	// левое соединение нужно на случай отсутствия сообщений в чате.
-	// orm генерирует несколько запросов для своих нужд, возможно неоптимально
 	query := `SELECT id FROM (SELECT max(messages.created_at), chats.id
 			FROM chats
 			LEFT JOIN messages on chats.id = messages.chat_id
