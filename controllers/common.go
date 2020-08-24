@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/backend-trainee-assignment/views"
 	"github.com/golang/gddo/httputil/header"
+	"github.com/nlevankov/backend-trainee-assignment/views"
 )
 
 type malformedRequest struct {

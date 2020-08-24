@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/backend-trainee-assignment/models"
-	"github.com/backend-trainee-assignment/views"
+	"github.com/nlevankov/backend-trainee-assignment/models"
+	"github.com/nlevankov/backend-trainee-assignment/views"
 	"net/http"
 )
 
